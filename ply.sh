@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
+# Edit these lines: {{{
 AUDIODIRS=(
-    "$HOME/Music"
-    "$HOME/Music/plylists"
+    "$HOME/audiodirs"
 )
-PLYLISTDIR="$HOME/Music/plylists"
+PLYLISTDIR="$HOME/audiodirs/plylists"
 PLAYERCMD="nvlc --no-video --loop --random"
 FINDERCMD="find ${AUDIODIRS[@]} -regextype posix-extended -regex "'.*(mp3|mp4|wav|flac|m4a|mkv)'
 # FINDERCMD="fdfind -I "'.*(mp3|mp4|wav|flac|m4a|mkv)'" ${AUDIODIRS[@]}"
+# }}}
 
 
 show_help() {
