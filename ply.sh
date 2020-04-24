@@ -36,6 +36,7 @@ if [ -n "$1" ]; then
     while :; do
         case $1 in
             -l|--list)
+                [[ ! -f "$plylist" ]] && die "You haven't built any plylist. Build with ply -b"
                 echo "Default plylist:"
                 cat "$plylist" | while read line; do echo " - "$(basename "$line"); done
                 exit
