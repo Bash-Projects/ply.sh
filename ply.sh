@@ -19,7 +19,7 @@ Options:
     -l, --list        list contents of current DEFAULT playlist
     -b, --build       build DEFAULT playlist
     -s, --save        save DEFAULT playlist
-    -c, --chose       choose from saved playlists
+    -c, --choose       choose from saved playlists
 _EOF_
 }
 
