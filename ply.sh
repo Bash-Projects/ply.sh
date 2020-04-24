@@ -29,7 +29,8 @@ die() {
 
 AUDIODIRS=( "${AUDIODIRS[@]/$PLYLISTDIR/}" )
 plylist="$PLYLISTDIR/plylist-default.m3u"
-FZFCMD=(fzf -m --height=100 -d '^.*/' --with-nth=2 --prompt 'Add_to_plylist:')
+
+[[ ! -d "$PLYLISTDIR" ]] && die "$PLYLISTDIR not found."
 
 if [ -n "$1" ]; then
     while :; do
@@ -41,7 +42,7 @@ if [ -n "$1" ]; then
                 ;;
             -b|--build)
                 # plstr=$($FINDERCMD ${AUDIODIRS[@]} | shuf | $FZFCMD)
-                plstr=$($FINDERCMD | shuf | ${FZFCMD[@]})
+                plstr=$($FINDERCMD | shuf | fzf -m --height=100 -d '^.*/' --with-nth=2 --prompt="Add_to_plylist: ")
                 [[ -z "$plstr" ]] && die "Canceled." || echo "$plstr" > "$plylist"
                 exit
                 ;;
@@ -53,9 +54,14 @@ if [ -n "$1" ]; then
                 exit
                 ;;
             -c|--choose)
-                tmpstr=$(find "$PLYLISTDIR" -type f -name "plylist-*.m3u" | fzf -d '^.*/plylist-' --with-nth=2 --preview-window=right:65 --preview 'cat {} | while read line; do basename "$line"; done')
-                [[ -z "$tmpstr" ]] && die "Canceled." || plylist=$tmpstr
+                tmpstr=$(find "$PLYLISTDIR" -type f -name "plylist-*.m3u" | fzf -d '^.*/plylist-' --prompt="Choose plylist: " --with-nth=2 --preview 'cat {} | while read line; do basename "$line"; done')
+                [[ -z "$tmpstr" ]] && die "Canceled." || plylist="$tmpstr"
                 break
+                ;;
+            -d|--delete)
+                tmpstr=$(find "$PLYLISTDIR" -type f ! -name "plylist-default.m3u" -name "plylist-*.m3u" | fzf -m -d '^.*/plylist-' --prompt="Delete plylist: " --with-nth=2 --preview 'cat {} | while read line; do basename "$line"; done')
+                [[ -z "$tmpstr" ]] && die "Canceled." || set -f; ORIFS=$IFS; IFS=$'\n'; rm ${tmpstr[@]}; IFS=$ORIFS; set +f
+                exit
                 ;;
             *)
                 show_help
@@ -66,5 +72,7 @@ if [ -n "$1" ]; then
     done
 fi
 
-$PLAYERCMD $plylist 2>/dev/null
+[[ ! -f "$plylist" ]] && die "You haven't built any plylist. Build with ply -b"
+
+$PLAYERCMD "$plylist" 2>/dev/null
 exit
