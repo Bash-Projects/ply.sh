@@ -5,9 +5,9 @@ AUDIODIRS=(
     "$HOME/Music/plylists"
 )
 PLYLISTDIR="$HOME/Music/plylists"
-FINDERCMD="fdfind -I ."
-FZFCMD="fzf -m --height=100"
 PLAYERCMD="nvlc --no-video --loop --random"
+FINDERCMD="find ${AUDIODIRS[@]} -regextype posix-extended -regex "'.*(mp3|mp4|wav|flac|m4a|mkv)'
+# FINDERCMD="fdfind -I "'.*(mp3|mp4|wav|flac|m4a|mkv)'" ${AUDIODIRS[@]}"
 
 
 show_help() {
@@ -15,10 +15,10 @@ show_help() {
 Usage: ply [OPTIONS]
 
 Options:
-    -l,--list        list contents of current DEFAULT playlist
-    -b,--build       build DEFAULT playlist
-    -s,--save        save DEFAULT playlist
-    -c,--chose       choose from saved playlists
+    -l, --list        list contents of current DEFAULT playlist
+    -b, --build       build DEFAULT playlist
+    -s, --save        save DEFAULT playlist
+    -c, --chose       choose from saved playlists
 _EOF_
 }
 
@@ -29,6 +29,7 @@ die() {
 
 AUDIODIRS=( "${AUDIODIRS[@]/$PLYLISTDIR/}" )
 plylist="$PLYLISTDIR/plylist-default.m3u"
+FZFCMD=(fzf -m --height=100 -d '^.*/' --with-nth=2 --prompt 'Add_to_plylist:')
 
 if [ -n "$1" ]; then
     while :; do
@@ -39,7 +40,8 @@ if [ -n "$1" ]; then
                 exit
                 ;;
             -b|--build)
-                plstr=$($FINDERCMD ${AUDIODIRS[@]} | shuf | $FZFCMD)
+                # plstr=$($FINDERCMD ${AUDIODIRS[@]} | shuf | $FZFCMD)
+                plstr=$($FINDERCMD | shuf | ${FZFCMD[@]})
                 [[ -z "$plstr" ]] && die "Canceled." || echo "$plstr" > "$plylist"
                 exit
                 ;;
@@ -51,7 +53,7 @@ if [ -n "$1" ]; then
                 exit
                 ;;
             -c|--choose)
-                tmpstr=$(find "$PLYLISTDIR" -type f -name "plylist-*.m3u" | fzf -d '^.*/' --with-nth=2 --preview 'cat {} | while read line; do basename "$line"; done')
+                tmpstr=$(find "$PLYLISTDIR" -type f -name "plylist-*.m3u" | fzf -d '^.*/plylist-' --with-nth=2 --preview-window=right:65 --preview 'cat {} | while read line; do basename "$line"; done')
                 [[ -z "$tmpstr" ]] && die "Canceled." || plylist=$tmpstr
                 break
                 ;;
