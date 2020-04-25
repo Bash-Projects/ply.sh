@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Script to manage playlists in m3u format using fzf and
+# play any of them using nvlc.
+#
+# Source: https://github.com/wustho/ply.sh
+
 
 # Edit these lines: {{{
 AUDIODIRS=(
@@ -15,11 +20,15 @@ show_help() {
     cat << _EOF_
 Usage: ply [OPTIONS]
 
+ply without args will play DEFAULT playlist
+
 Options:
     -l, --list        list contents of current DEFAULT playlist
     -b, --build       build DEFAULT playlist
-    -s, --save        save DEFAULT playlist
-    -c, --choose      choose from saved playlists
+    -s, --save        save DEFAULT playlist as
+    -c, --choose      choose from saved playlists to play
+        --set-def     make chosen playlist as DEFAULT playlist
+    -d, --delete      delete chosen playlist
     -a, --append      append entries to chosen playlist
     -r, --remove      remove entries from chosen playlist
 _EOF_
@@ -61,6 +70,11 @@ if [ -n "$1" ]; then
                 tmpstr=$(find "$PLYLISTDIR" -type f -name "plylist-*.m3u" | fzf -d '^.*/plylist-' --prompt="Choose plylist: " --with-nth=2 --preview 'cat {} | while read line; do basename "$line"; done')
                 [[ -z "$tmpstr" ]] && die "Canceled." || plylist="$tmpstr"
                 break
+                ;;
+            --set-def)
+                tmpstr=$(find "$PLYLISTDIR" -type f ! -name "plylist-default.m3u" -name "plylist-*.m3u" | fzf -d '^.*/plylist-' --prompt="Plylist to set as DEF: " --with-nth=2 --preview 'cat {} | while read line; do basename "$line"; done')
+                [[ -z "$tmpstr" ]] && die "Canceled." || cp "$tmpstr" "$plylist"
+                exit
                 ;;
             -d|--delete)
                 tmpstr=$(find "$PLYLISTDIR" -type f ! -name "plylist-default.m3u" -name "plylist-*.m3u" | fzf -m -d '^.*/plylist-' --prompt="Delete plylist: " --with-nth=2 --preview 'cat {} | while read line; do basename "$line"; done')
