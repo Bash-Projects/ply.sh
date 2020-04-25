@@ -1,7 +1,8 @@
 ![screencast](https://raw.githubusercontent.com/wustho/ply.sh/master/screencast.gif)
 
 Simple script to manage playlists in m3u format using `fzf` and
-play them using `nvlc`.
+play them using `nvlc`. 
+Intended to play any audios/videos without too much hassle if you like to randomly listen to whatever medias on your drive while you do stuffs.
 
 # Usage
 
