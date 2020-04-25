@@ -2,11 +2,9 @@
 
 # Edit these lines: {{{
 AUDIODIRS=(
-#    "$HOME/audiodirs"
-    "$HOME/Music"
+   "$HOME/audiodirs"
 )
-#PLYLISTDIR="$HOME/audiodirs/plylists"
-PLYLISTDIR="$HOME/Music/plylists"
+PLYLISTDIR="$HOME/audiodirs/plylists"
 PLAYERCMD="nvlc --no-video --loop --random"
 FINDERCMD="find ${AUDIODIRS[@]} -regextype posix-extended -regex "'.*(mp3|mp4|wav|flac|m4a|mkv)'
 # FINDERCMD="fdfind -I "'.*(mp3|mp4|wav|flac|m4a|mkv)'" ${AUDIODIRS[@]}"
