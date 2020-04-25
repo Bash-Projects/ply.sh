@@ -1,3 +1,5 @@
+![screencast](https://raw.githubusercontent.com/wustho/ply.sh/master/screencast.gif)
+
 Simple script to manage playlists in m3u format using `fzf` and
 play them using `nvlc`.
 
